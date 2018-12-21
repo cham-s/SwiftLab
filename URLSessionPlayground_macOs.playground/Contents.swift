@@ -58,23 +58,80 @@ struct URLLoader {
     }
 }
 
-
-func run() {
-    let group = DispatchGroup()
-    group.enter()
-    if let loader = URLLoader(urlString: "https://apple.com") {
-        DispatchQueue.global().async {
-            loader.load()
+@available(OSX 10.13, *)
+class MySession: NSObject, URLSessionDelegate, URLSessionTaskDelegate, URLSessionDataDelegate {
+    private lazy var session: URLSession = {
+        let configuration = URLSessionConfiguration.default
+        configuration.waitsForConnectivity = true
+        return URLSession(configuration: configuration,
+                          delegate: self, delegateQueue: nil)
+    }()
+    
+    var receivedData: Data?
+    
+    func startLoad() {
+        let url = URL(string: "https://apple.com")!
+        receivedData = Data()
+        let task = session.dataTask(with: url)
+        task.resume()
+    }
+    
+    // delegate methods
+    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask,
+                    didReceive response: URLResponse,
+                    completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
+        guard let response = response as? HTTPURLResponse,
+            (200...299).contains(response.statusCode),
+            let mimeType = response.mimeType,
+            mimeType == "text/html" else {
+                
+                completionHandler(.cancel)
+                return
         }
         
-        group.wait()
-        return
-    } else {
-        print("bad url")
+        completionHandler(.allow)
+    }
+    
+    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
+        self.receivedData?.append(data)
+    }
+    
+    func urlSession(_ session: URLSession, task: URLSessionTask,
+                    didCompleteWithError error: Error?) {
+        DispatchQueue.global().async {
+            if let error = error {
+                self.handleClientError(error)
+            } else if let receivedData = self.receivedData,
+                let string = String(data: receivedData, encoding: .utf8) {
+                print(string)
+            } else {
+                print("no data")
+            }
+        }
+    }
+    
+    func handleClientError(_ error: Error) {
+        print(error.localizedDescription)
     }
 }
 
-run()
 
+@available(OSX 10.13, *)
+func run() {
+    let group = DispatchGroup()
+    group.enter()
+    let loader = MySession()
+    DispatchQueue.global().async {
+        loader.startLoad()
+    }
+    
+    group.wait()
+    return
+}
 
-
+if #available(OSX 10.13, *) {
+    run()
+} else {
+    // Fallback on earlier versions
+    // TODO: handle earlier version
+}
