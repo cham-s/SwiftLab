@@ -100,10 +100,81 @@ import Foundation
 //end1 = CFAbsoluteTimeGetCurrent() - start1
 
 //print("Took \(end1) seconds")
+//
+//let cities = ["Shanghai": 24_256_800, "Karachi": 23_500_000,
+//              "Beijing": 21_516_000, "Seoul": 9_995_000]
+//let groupedCities = Dictionary(grouping: cities.keys) { $0.first! }
+//print(groupedCities)
+//
+//let panamaPopulation = cities["Paname", default: 0]
 
-let cities = ["Shanghai": 24_256_800, "Karachi": 23_500_000,
-              "Beijing": 21_516_000, "Seoul": 9_995_000]
-let groupedCities = Dictionary(grouping: cities.keys) { $0.first! }
-print(groupedCities)
 
-let panamaPopulation = cities["Paname", default: 0]
+let fruits1 = Set(["apple", "lemon", "banana"])
+let fruits2 = Set(["watermelon", "melon", "lemon"])
+let fruits3 = Set(["bilberry", "avocado", "Akee"])
+
+let fruits1and2 = fruits1.union(fruits2)
+
+fruits1.isSubset(of: fruits1and2)
+fruits1.isSubset(of: fruits1)
+fruits1.isSubset(of: fruits2)
+fruits1.isStrictSubset(of: fruits1and2)
+fruits1.isStrictSubset(of: fruits1)
+fruits1and2.isSuperset(of: fruits2)
+fruits1and2.isSuperset(of: fruits3)
+fruits1and2.isStrictSubset(of: fruits1)
+fruits1.isDisjoint(with: fruits2)
+
+
+let union = fruits1.union(fruits2)
+
+let intersection = fruits1.intersection(fruits2)
+let difference = fruits1.symmetricDifference(fruits2)
+
+
+// Tuples closures
+var employee = (first: "Jhon", last: "Doe", doTask: { (message: String) in
+    print(message)
+})
+
+employee.doTask("I deliver pizzas")
+
+
+var person = (first: "Jhon", last: "Doe")
+var person2 = (firstName: "Jhon", lastName: "Doe")
+
+person == person2
+
+
+// Typealias
+
+typealias Name = (first: String, last: String)
+
+
+// Limiting generics
+func square<T: BinaryInteger>(_ value: T) -> T {
+    return value * value
+}
+
+// Working with Cocoa types
+
+struct CustomCountedSet<T: Any> {
+    let internalSet = NSCountedSet()
+    
+    mutating func add(_ obj: T) {
+        internalSet.add(obj)
+    }
+    
+    mutating func remove(_ obj: T) {
+        internalSet.remove(obj)
+    }
+    
+    func count(for obj: T) -> Int {
+        return internalSet.count(for: obj)
+    }
+}
+
+var countedSet = CustomCountedSet<String>()
+countedSet.add("Hello")
+countedSet.add("Hello")
+countedSet.count(for: "Hello")
