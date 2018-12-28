@@ -73,4 +73,23 @@ final class TestContainer2 {
     var box: Box<Person>!
 }
 
+struct PersonStruct {
+    var name: String
+    var age: Int
+}
 
+var taylor = PersonStruct(name: "Taylor Swift", age: 26)
+taylor.name = "Justin Bieber"
+
+final class PersonClass {
+    var name: String
+    var age: Int
+    
+    init(name: String, age: Int) {
+        self.name = name
+        self.age = age
+    }
+}
+
+let taylor2 = PersonClass(name: "Taylor Swift", age: 26)
+taylor2.name = "Justin Bieber"
