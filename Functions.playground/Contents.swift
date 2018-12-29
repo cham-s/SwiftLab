@@ -73,18 +73,43 @@ import UIKit
 //    closure("Hello")
 //}
 
-typealias Action = () -> Void
+typealias Action = (String) -> Void
 
-let labeledActions = ["cooking", "eating", "cleaning"]
+
 var actions = [Action]()
 
-for label in labeledActions {
-    actions.append({ print("I am \(label)") })
+for _ in 0..<3 {
+    actions.append({ print("I am \($0)") })
 }
 
-func runAction(action: Action) {
-    
+enum Task {
+    case cook, eat, clean
 }
 
+func run(actionwith task: Task, action: @escaping Action) {
+    switch task {
+    case .cook:
+        DispatchQueue.main.async {
+            action("cooking")
+        }
+    case .eat:
+        action("eating")
+    case .clean:
+        action("cleaning")
+    }
+}
 
+let labeledActions: [Task] =  [.cook, .eat, .clean]
+
+for (index, task) in labeledActions.enumerated() {
+    run(actionwith: task, action: actions[index])
+}
+
+func printTest(_ result: @autoclosure () -> Void) {
+    print("Before")
+    result()
+    print("After")
+}
+
+printTest( print("Hello") )
 
