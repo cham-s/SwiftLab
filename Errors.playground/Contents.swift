@@ -88,17 +88,21 @@ import UIKit
 //    print("Fetch error")
 //}
 
-//class CustomClass: NSObject {
-//
-//}
-//
-//func makeObject() -> NSObject {
-//    return CustomClass()
-//}
-//
-//func testObject() -> NSObject {
-//    
-//}
+class CustomClass: NSObject {
+
+}
+
+func makeObject() -> NSObject {
+    return CustomClass()
+}
+
+func testObject() -> NSObject {
+    let obj = makeObject()
+    guard let customObj = obj as? CustomClass  else {
+        fatalError()
+    }
+    return customObj
+}
 
 
 
