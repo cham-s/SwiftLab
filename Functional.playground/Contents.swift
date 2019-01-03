@@ -57,3 +57,12 @@ print(result)
 
 let stringNumber: String? = "5"
 let intNumber = stringNumber.map { Int($0) }
+let flatMapNumber = stringNumber.flatMap { Int($0) }
+
+
+
+let ns = [1, 3, 4, 5]
+let max = ns.max { $0 < $1 }
+print(max ?? "none")
+
+
